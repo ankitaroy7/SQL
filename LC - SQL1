@@ -1,0 +1,37 @@
+--Leet Code Questions
+
+
+------1. Average Time of Process per Machine
+
+select machine_id, round((end_time - start_time)/no_of_processes, 3) as processing_time from
+(select machine_id
+, sum(case when activity_type = 'start' then timestamp end) as start_time
+, sum(case when activity_type = 'end' then timestamp end) as end_time
+, count(distinct process_id) as no_of_processes
+from Activity
+group by machine_id) a
+
+
+------2. Employee Bonus
+
+select e.name, b.bonus
+from Employee e
+left join Bonus b
+on e.empId = b.empId
+where b.bonus < 1000 or b.bonus is null
+
+------3. Students and Examinations
+
+with cte1 as
+(select a.*, e.subject_name as subject_name1 from
+((select * 
+from Students
+cross join Subjects) a
+left join
+Examinations e
+on a.student_id = e.student_id and a.subject_name = e.subject_name))
+
+select student_id,student_name, subject_name, count(subject_name1) as attended_exams
+from cte1
+group by student_id,student_name, subject_name
+order by student_id, subject_name

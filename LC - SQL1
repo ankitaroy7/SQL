@@ -45,3 +45,31 @@ inner join Employee e2
 on e1.managerId = e2.id) a
 group by managerId, manager_name
 having count(a.id) >= 5
+
+------9. Confirmation Rate
+
+with cte1 as
+(select s.user_id, c.time_stamp, c.action
+from Confirmations c
+right join Signups s
+on c.user_id = s.user_id)
+
+,cte2 as
+(select user_id, count(action) as total_requested_confirmation
+from cte1
+group by user_id)
+
+,cte3 as
+(select *, count(*) as total_no_of_confirmed from
+cte1
+where action = 'confirmed'
+group by user_id)
+
+,cte4 as
+(select a.user_id, round((b.total_no_of_confirmed/a.total_requested_confirmation),2) as confirmation_rate
+from cte2 a
+left join cte3 b
+on a.user_id = b.user_id)
+
+select user_id, coalesce(confirmation_rate, 0) as confirmation_rate from cte4
+order by confirmation_rate

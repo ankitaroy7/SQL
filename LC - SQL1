@@ -1,7 +1,7 @@
---Leet Code Questions
+--LeetCode Questions: Part 2
 
 
-------1. Average Time of Process per Machine
+------5. Average Time of Process per Machine [Easy]
 
 select machine_id, round((end_time - start_time)/no_of_processes, 3) as processing_time from
 (select machine_id
@@ -12,7 +12,7 @@ from Activity
 group by machine_id) a
 
 
-------2. Employee Bonus
+------6. Employee Bonus [Easy]
 
 select e.name, b.bonus
 from Employee e
@@ -20,7 +20,7 @@ left join Bonus b
 on e.empId = b.empId
 where b.bonus < 1000 or b.bonus is null
 
-------3. Students and Examinations
+------7. Students and Examinations [Easy]
 
 with cte1 as
 (select a.*, e.subject_name as subject_name1 from
@@ -35,3 +35,13 @@ select student_id,student_name, subject_name, count(subject_name1) as attended_e
 from cte1
 group by student_id,student_name, subject_name
 order by student_id, subject_name
+
+------8. Managers with at Least 5 Direct Reports [Medium]
+
+select manager_name as name from
+(select e1.*, e2.name as manager_name 
+from Employee e1
+inner join Employee e2 
+on e1.managerId = e2.id) a
+group by managerId, manager_name
+having count(a.id) >= 5
